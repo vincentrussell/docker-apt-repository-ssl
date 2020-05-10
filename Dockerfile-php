@@ -1,0 +1,4 @@
+FROM php:7.2.2-apache
+
+RUN apt-get update
+RUN apt-get install telnet iputils-ping apt-transport-https -y

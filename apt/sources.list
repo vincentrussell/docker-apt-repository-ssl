@@ -1,1 +1,1 @@
-deb http://docker-apt-repo:80/debian testing main
+deb [trusted=yes] https://nginx:443/debian repo main
