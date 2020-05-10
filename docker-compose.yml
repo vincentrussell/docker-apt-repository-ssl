@@ -1,0 +1,35 @@
+version: '2.1'
+#sudo docker-compose rm -f || true && sudo docker volume rm -f $(sudo docker volume ls -q) || true &&  cd ../../mongodb-tomcat-session-manager/ && mvn -Psource-and-doc clean install -DskipITs && cd ../spring-security-hello-world-example && mvn clean install -DskipITs && cd docker-test && reset && sudo docker-compose up
+services:
+  docker-apt-repo:
+    image: tedezed/apt-repository
+    hostname: docker-apt-repo
+    container_name: docker-apt-repo
+    ports:
+      - 8080:80
+    volumes:
+      - ./repo:/usr/src/pagespeed/
+    environment:
+      - PGP_PASSWD=password
+      - APT_DOMAIN=localhost
+  # cd /var/packages/debian
+  # reprepro includedeb testing /usr/src/pagespeed/*.deb
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx-ssl-reverse-proxy.conf:/etc/nginx/nginx.conf
+      - ./cert/cert.pem:/cert/cert.pem
+      - ./cert/key.pem:/cert/cert.key
+    ports:
+      - 8443:443
+  php:
+    image: php:7.2.2-apache
+    container_name: php
+    volumes:
+      - ./php/:/var/www/html/
+      - ./apt/sources.list:/etc/apt/sources.list
+    ports:
+      - "8100:80"
+    stdin_open: true
+    tty: true
